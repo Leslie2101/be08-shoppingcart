@@ -19,9 +19,11 @@ public class Main {
 
 	static Cart cart;
 	static Shop shop;
-	static Customer customer;
+//	static Customer customer;
 	static Scanner scan = new Scanner(System.in);
 	private static final int VIEW_CART_OPTION_ON_MENU = 0;
+	private static final int BACK_TO_MENU = 1;
+	private static final int CHECKOUT = 2;
 
 	private static ShoppingCartService cartService = new ShoppingCartService();
 	private static AuthenService authenService = new AuthenService();
@@ -36,6 +38,8 @@ public class Main {
 		do {
 			isLoggedin = doLogin();
 		} while (!isLoggedin);
+		
+		Storage.shop.shopPolicy.afterLogin();
 
 		do {
 			showMenu();
@@ -45,14 +49,38 @@ public class Main {
 			scan.nextLine();
 
 			if (option == VIEW_CART_OPTION_ON_MENU) {
+				
 				cartService.showCart(cart);
-				cartService.showCost(cart, shop, customer);
+				System.out.println("1. Back to menu\n2. Checkout");
+				System.out.print("Enter an option: ");
+				int choice = scan.nextInt();
+				scan.nextLine();
+				
+				if (choice == CHECKOUT) {
+					checkOut();
+				} 
+				
+				
+					
+				
 			} else {
 				doAddProductToCart(option);
 			}
 
 		} while (true);
 	}
+	
+	
+	
+	private static void checkOut() {
+		cartService.showCost(cart, shop, Storage.customer);				
+		Storage.cost = cartService.calculateInitialCost(cart);
+		Storage.shop.shopPolicy.afterCheckout();
+		cartService.clearCart(cart);
+		
+	}
+	
+
 	
 	
 	private static Shop selectShop() {
@@ -64,7 +92,7 @@ public class Main {
 		int option = scan.nextInt();
 		scan.nextLine();
 		shop = shopService.getShops().get(option-1);
-		
+				
 		System.out.println("-------- Welcome to shop " + shop.name + "----------");
 		return shop;
 		
@@ -108,8 +136,8 @@ public class Main {
 		
 		boolean isLoggedin = false;
 		
-		customer = authenService.login(userID, userPassword);
-		if (customer != null) {
+		Storage.customer = authenService.login(userID, userPassword);
+		if (Storage.customer != null) {
 			cart = new Cart();
 			cart.items = new ArrayList<CartItem>();
 			isLoggedin = true;

@@ -17,6 +17,10 @@ public class ShoppingCartService {
 			cart.items.add(new CartItem(product, quantity));
 		}
 	}
+	
+	public void clearCart(Cart cart) {
+		cart.items.clear();
+	}
 
 	private CartItem findProduct(Cart cart, Product product) {
 		for (CartItem item : cart.items) {
