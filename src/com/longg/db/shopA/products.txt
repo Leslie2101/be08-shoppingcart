@@ -1,4 +1,4 @@
-product, price
+name, price
 milktea,5
 matcha,4
 pudding,1

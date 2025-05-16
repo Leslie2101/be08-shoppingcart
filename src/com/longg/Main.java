@@ -3,6 +3,7 @@ package com.longg;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import com.longg.common.Storage;
 import com.longg.db.Database;
 import com.longg.dto.Cart;
 import com.longg.dto.CartItem;
@@ -10,6 +11,8 @@ import com.longg.dto.Customer;
 import com.longg.dto.Product;
 import com.longg.dto.Shop;
 import com.longg.service.AuthenService;
+import com.longg.service.ProductService;
+import com.longg.service.ShopService;
 import com.longg.service.ShoppingCartService;
 
 public class Main {
@@ -27,7 +30,8 @@ public class Main {
 
 		boolean isLoggedin;
 		
-		selectShop();
+		shop = selectShop();
+		Storage.shop = shop;
 
 		do {
 			isLoggedin = doLogin();
@@ -51,15 +55,18 @@ public class Main {
 	}
 	
 	
-	private static void selectShop() {
+	private static Shop selectShop() {
 		showShops();
+		ShopService shopService = new ShopService();
+
 		
 		System.out.print("Enter An Option: ");
 		int option = scan.nextInt();
 		scan.nextLine();
-		shop = SetUp.SHOPS.get(option-1);
+		shop = shopService.getShops().get(option-1);
 		
 		System.out.println("-------- Welcome to shop " + shop.name + "----------");
+		return shop;
 		
 		
 		
@@ -67,9 +74,11 @@ public class Main {
 	
 	
 	private static void showShops() {
+		ShopService shopService = new ShopService();
+
 		System.out.println("============ Shops ==========");
-		for (int i = 0; i < SetUp.SHOPS.size(); i++) {
-			System.out.println((i+1) + ". " + SetUp.SHOPS.get(i).name);
+		for (int i = 0; i < shopService.getShops().size(); i++) {
+			System.out.println((i+1) + ". " + shopService.getShops().get(i).name);
 		}
 		
 		System.out.println("=============================");
@@ -80,9 +89,12 @@ public class Main {
 	private static void showMenu() {
 		System.out.println("=========== Menu ============ ");
 		System.out.println("0. View Cart");
-		for (int i = 0; i < shop.products.size(); i++) {
+		
+		ProductService productService = new ProductService();
+		ArrayList<Product> products = productService.getProductsByShop();
+		for (int i = 0; i < productService.getProductsByShop().size(); i++) {
 			System.out.println(
-					(i + 1) + ". " + shop.products.get(i).name + " : " + shop.products.get(i).price);
+					(i + 1) + ". " + products.get(i).name + " : " + products.get(i).price);
 		}
 	}
 
@@ -96,7 +108,7 @@ public class Main {
 		
 		boolean isLoggedin = false;
 		
-		customer = authenService.login(shop, userID, userPassword);
+		customer = authenService.login(userID, userPassword);
 		if (customer != null) {
 			cart = new Cart();
 			cart.items = new ArrayList<CartItem>();
@@ -107,7 +119,8 @@ public class Main {
 	}
 
 	private static void doAddProductToCart(int productIndex) {
-		Product selectedProduct = shop.products.get(productIndex - 1);
+		ProductService productService = new ProductService();
+		Product selectedProduct = productService.getProductsByShop().get(productIndex - 1);
 
 		System.out.print("Enter quantity : ");
 		int quantity = Integer.parseInt(scan.nextLine());

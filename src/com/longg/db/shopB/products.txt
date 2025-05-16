@@ -1,4 +1,4 @@
-product, price
+name, price
 flat white,2
 latte,4
 cappuccino,3

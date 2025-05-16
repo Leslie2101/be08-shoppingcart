@@ -1,0 +1,3 @@
+id,name,dbPath
+1,milktea,shopA
+2,cafe,shopB
