@@ -14,6 +14,10 @@ import java.util.*;
 
 public class EmailService {
 
+    public void sendEmail(String content){
+        System.out.println(content);
+    }
+
 //	public void sendEmail(){    
 //	   String recipient = "recipient@gmail.com";
 //	   String sender = "sender@gmail.com";

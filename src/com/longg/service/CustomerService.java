@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 import com.longg.common.Storage;
 import com.longg.dto.Customer;
-import com.longg.dto.Shop;
 
 public class CustomerService {
 	

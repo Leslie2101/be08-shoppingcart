@@ -7,7 +7,6 @@ import java.util.Scanner;
 
 import com.longg.common.Storage;
 import com.longg.dto.Product;
-import com.longg.dto.Shop;
 
 public class ProductService {
 	private final String PRODUCT_FILE_PATH = "src/com/longg/db/";

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 import com.longg.common.Storage;
-import com.longg.db.Database;
 import com.longg.dto.Cart;
 import com.longg.dto.CartItem;
-import com.longg.dto.Customer;
 import com.longg.dto.Product;
 import com.longg.dto.Shop;
 import com.longg.service.AuthenService;
@@ -25,8 +23,8 @@ public class Main {
 	private static final int BACK_TO_MENU = 1;
 	private static final int CHECKOUT = 2;
 
-	private static ShoppingCartService cartService = new ShoppingCartService();
-	private static AuthenService authenService = new AuthenService();
+	private static ShoppingCartService cartService = null;
+	private static AuthenService authenService = null;
 
 	public static void main(String[] args) {
 
@@ -34,12 +32,13 @@ public class Main {
 		
 		shop = selectShop();
 		Storage.shop = shop;
-
+		authenService = AuthenService.getAuthenService(shop);
+		cartService = ShoppingCartService.getCartService(shop);
+		
 		do {
 			isLoggedin = doLogin();
 		} while (!isLoggedin);
 		
-		Storage.shop.shopPolicy.afterLogin();
 
 		do {
 			showMenu();
@@ -75,7 +74,7 @@ public class Main {
 	private static void checkOut() {
 		cartService.showCost(cart, shop, Storage.customer);				
 		Storage.cost = cartService.calculateInitialCost(cart);
-		Storage.shop.shopPolicy.afterCheckout();
+		cartService.checkOut(Storage.customer, cart);
 		cartService.clearCart(cart);
 		
 	}
